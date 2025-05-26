@@ -1,1 +1,0 @@
-/usr/bin/cc "CMakeFiles/convert-to-string.dir/src/main.c.o" -o convert-to-string  -lc-string

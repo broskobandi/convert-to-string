@@ -1,7 +1,0 @@
-/home/bandigame/projects/convert-to-string/build/CMakeFiles/convert-to-string.dir
-/home/bandigame/projects/convert-to-string/build/CMakeFiles/edit_cache.dir
-/home/bandigame/projects/convert-to-string/build/CMakeFiles/rebuild_cache.dir
-/home/bandigame/projects/convert-to-string/build/CMakeFiles/list_install_components.dir
-/home/bandigame/projects/convert-to-string/build/CMakeFiles/install.dir
-/home/bandigame/projects/convert-to-string/build/CMakeFiles/install/local.dir
-/home/bandigame/projects/convert-to-string/build/CMakeFiles/install/strip.dir
