@@ -13,7 +13,7 @@
 #include <string.h>
 #include <c-string.h>
 
-static const char help[] =
+static const char help_message[] =
 "\n"
 "\tConverts content of input file(s) into a single c string.\n"
 "\tOptionally, it saves the output file as C header file.\n"
@@ -29,16 +29,18 @@ static const char help[] =
 "\n";
 
 void print_help_and_exit() {
-	printf("%s\n", help);
+	printf("%s\n", help_message);
 	exit(1);
 }
 
 int main(int argc, char *argv[]) {
 
+	// Assumed default values
 	int is_header = 0;
 	int output_arg = argc - 1;
 	int num_input_files = argc - 2;
 
+	// Update values based on arguments and options passed
 	if (argc < 3) {
 		print_help_and_exit();
 	}
@@ -55,17 +57,26 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	// Prepare string object
 	STR_AUTO_T *str = STR_NEW;
+
+	// Create and format header guard in case --header option was passed
 	if (is_header) {
+		STR_AUTO_T *header_guard = STR_NEW_FROM(argv[output_arg]);
+		STR_REPLACE(header_guard, "-", "_");
+		STR_REPLACE(header_guard, ".h", "");
+		STR_REPLACE(header_guard, ".", "_");
 		STR_CAT(str, "#ifndef ");
-		STR_CAT(str, argv[output_arg]);
+		STR_CAT(str, STR_DATA(header_guard));
 		STR_CAT(str, "_H\n");
 		STR_CAT(str, "#define ");
-		STR_CAT(str, argv[output_arg]);
+		STR_CAT(str, STR_DATA(header_guard));
 		STR_CAT(str, "_H\n");
 	}
 	STR_CAT(str, "const char str[] =\"");
 
+	// Get data to be saved in the string variable
+	// in the output file
 	for (int i = 1; i < num_input_files + 1; i++) {
 		FILE *file = fopen(argv[i], "r");
 		char c;
@@ -81,6 +92,7 @@ int main(int argc, char *argv[]) {
 		fclose(file);
 	}
 
+	// Ensure the string is correctly terminated.
 	if (
 		STR_GET(str, STR_LEN(str) - 1) == '\"' &&
 		STR_GET(str, STR_LEN(str) - 2) == '\"'
@@ -89,15 +101,12 @@ int main(int argc, char *argv[]) {
 	}
 	STR_PUSH(str, ';');
 
+	// Close the header guard in case --header option was passed
 	if (is_header) {
 		STR_CAT(str, "\n#endif");
 	}
 
-	STR_AUTO_T *output_file_name = STR_NEW_FROM(argv[output_arg]);
-	STR_REPLACE(str, ".h", "");
-	STR_REPLACE(str, ".", "");
-	STR_REPLACE(str, "-", "_");
-
+	// Create output file
 	FILE *output = fopen(argv[output_arg], "w");
 
 	if (fputs(STR_DATA(str), output) != 1) return 1;
