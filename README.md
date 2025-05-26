@@ -4,8 +4,7 @@ Converts the content of the input file(s) into a single c string and saves it in
 ## Installation
 
 The application has only one dependency, c-string:
-https://github.com/broskobandi/c-string.git
-Make sure it is installed before proceeding.
+https://github.com/broskobandi/c-string.git. Make sure it is installed before proceeding.
 
 Once c-string is installed, clone and cd into this repository:
 ```bash
