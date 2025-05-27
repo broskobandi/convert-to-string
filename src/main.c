@@ -73,7 +73,13 @@ int main(int argc, char *argv[]) {
 		STR_CAT(str, STR_DATA(header_guard));
 		STR_CAT(str, "_H\n");
 	}
-	STR_CAT(str, "const char str[] =\"");
+	STR_AUTO_T *string_var_name = STR_NEW_FROM(argv[output_arg]);
+	STR_REPLACE(string_var_name, "-", "_");
+	STR_REPLACE(string_var_name, ".h", "");
+	STR_REPLACE(string_var_name, ".", "");
+	STR_CAT(str, "const char ");
+	STR_CAT(str, STR_DATA(string_var_name));
+	STR_CAT(str, "[] =\"");
 
 	// Get data to be saved in the string variable
 	// in the output file
