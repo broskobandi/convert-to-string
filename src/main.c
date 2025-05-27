@@ -73,6 +73,8 @@ int main(int argc, char *argv[]) {
 		STR_CAT(str, STR_DATA(header_guard));
 		STR_CAT(str, "_H\n");
 	}
+
+	// Format string variable's name
 	STR_AUTO_T *string_var_name = STR_NEW_FROM(argv[output_arg]);
 	STR_REPLACE(string_var_name, "-", "_");
 	STR_REPLACE(string_var_name, ".h", "");
@@ -81,14 +83,16 @@ int main(int argc, char *argv[]) {
 	STR_CAT(str, STR_DATA(string_var_name));
 	STR_CAT(str, "[] =\"");
 
-	// Get data to be saved in the string variable
+	// Get and format data to be saved in the string variable
 	// in the output file
 	for (int i = 1; i < num_input_files + 1; i++) {
 		FILE *file = fopen(argv[i], "r");
 		if (!file) return 1;
 		char c;
 		while ((c = fgetc(file)) != EOF) {
-			if (c == '\n') {
+			if (c == '\\') {
+				STR_CAT(str, "\\\\");
+			} else if (c == '\n') {
 				STR_CAT(str, "\\n\"\"");
 			} else if (c == '\t') {
 				STR_CAT(str, "\\t");
