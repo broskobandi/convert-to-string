@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
 	// Prepare string object
 	STR_AUTO_T *str = STR_NEW;
 
-	// Create and format header guard in case --header option was passed
+	// Create and format header guard if --header option was passed
 	if (is_header) {
 		STR_AUTO_T *header_guard = STR_NEW_FROM(argv[output_arg]);
 		STR_REPLACE(header_guard, "-", "_");
@@ -79,12 +79,15 @@ int main(int argc, char *argv[]) {
 	// in the output file
 	for (int i = 1; i < num_input_files + 1; i++) {
 		FILE *file = fopen(argv[i], "r");
+		if (!file) return 1;
 		char c;
 		while ((c = fgetc(file)) != EOF) {
 			if (c == '\n') {
 				STR_CAT(str, "\\n\"\"");
 			} else if (c == '\t') {
 				STR_CAT(str, "\\t");
+			} else if (c == '\"') {
+				STR_CAT(str, "\\\"");
 			} else {
 				STR_PUSH(str, c);
 			}
@@ -101,13 +104,14 @@ int main(int argc, char *argv[]) {
 	}
 	STR_PUSH(str, ';');
 
-	// Close the header guard in case --header option was passed
+	// Close the header guard if --header option was passed
 	if (is_header) {
 		STR_CAT(str, "\n#endif");
 	}
 
 	// Create output file
 	FILE *output = fopen(argv[output_arg], "w");
+	if (!output) return 1;
 
 	if (fputs(STR_DATA(str), output) != 1) return 1;
 
